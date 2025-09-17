@@ -33,7 +33,7 @@ function App() {
     try {
       const result = await generateImageFromImage(
         baseImage.file,
-        referenceImage ? referenceImage.file : null,
+        referenceImage?.file ?? null,
         prompt
       );
       setGeneratedImageUrl(result.imageUrl);
@@ -55,23 +55,21 @@ function App() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
           {/* Controls Column */}
           <div className="flex flex-col gap-6 p-6 bg-gray-800/50 rounded-2xl border border-gray-700 shadow-2xl">
-            <h2 className="text-2xl font-bold text-indigo-400">1. Upload Your Images</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <ImageUploader
-                title="Base Image"
-                description="The main image to edit."
-                file={baseImage}
-                onFileChange={setBaseImage}
-                onClear={() => setBaseImage(null)}
-              />
-              <ImageUploader
-                title="Reference Image"
-                description="Optional: guide the edit."
-                file={referenceImage}
-                onFileChange={setReferenceImage}
-                onClear={() => setReferenceImage(null)}
-              />
-            </div>
+            <h2 className="text-2xl font-bold text-indigo-400">1. Upload Images</h2>
+            <ImageUploader
+              title="Base Image"
+              description="The image you want to edit."
+              file={baseImage}
+              onFileChange={setBaseImage}
+              onClear={() => setBaseImage(null)}
+            />
+            <ImageUploader
+              title="Reference Image (Optional)"
+              description="Influence the style or content."
+              file={referenceImage}
+              onFileChange={setReferenceImage}
+              onClear={() => setReferenceImage(null)}
+            />
 
             <h2 className="text-2xl font-bold text-indigo-400 mt-4">2. Describe Your Edit</h2>
             <PromptInput

@@ -1,4 +1,3 @@
-
 import { GoogleGenAI, Modality, GenerateContentResponse, Part } from "@google/genai";
 
 const fileToGenerativePart = async (file: File): Promise<Part> => {
@@ -36,18 +35,19 @@ export const generateImageFromImage = async (
   const parts: Part[] = [];
 
   parts.push(await fileToGenerativePart(baseImage));
-
   if (referenceImage) {
     parts.push(await fileToGenerativePart(referenceImage));
   }
 
   if (prompt.trim()) {
     parts.push({ text: prompt });
-  }
-  
-  if (parts.length === 1 && !prompt.trim()) {
-    // Add a default prompt if only one image is provided with no text
-    parts.push({ text: "Slightly enhance this image, improve lighting and colors." });
+  } else {
+    // Add a default prompt if none is provided
+    if (referenceImage) {
+      parts.push({ text: "Use the style of the second image to modify the first image." });
+    } else {
+      parts.push({ text: "Slightly enhance this image, improve lighting and colors." });
+    }
   }
 
   const response: GenerateContentResponse = await ai.models.generateContent({
@@ -62,7 +62,9 @@ export const generateImageFromImage = async (
   let text: string | null = null;
   let hasImageOutput = false;
 
-  for (const part of response.candidates[0].content.parts) {
+  const responseParts = response.candidates?.[0]?.content?.parts ?? [];
+
+  for (const part of responseParts) {
     if (part.text) {
       text = part.text;
     } else if (part.inlineData) {
