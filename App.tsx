@@ -41,7 +41,7 @@ function App() {
     } catch (e) {
       const err = e as Error;
       console.error(err);
-      setError(`Generation failed: ${err.message}`);
+      setError(err.message);
     } finally {
       setIsLoading(false);
     }

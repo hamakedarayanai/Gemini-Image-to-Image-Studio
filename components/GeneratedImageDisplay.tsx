@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { LoadingSpinner, ErrorIcon, DownloadIcon, MaximizeIcon } from './Icons';
 
@@ -35,8 +36,8 @@ export const GeneratedImageDisplay: React.FC<GeneratedImageDisplayProps> = ({ im
       {error && !isLoading && (
         <div className="flex flex-col items-center justify-center gap-4 text-red-400">
           <ErrorIcon />
-          <p className="font-semibold">An Error Occurred</p>
-          <p className="text-sm text-red-300 max-w-md">{error}</p>
+          <p className="font-semibold">Generation Failed</p>
+          <p className="text-sm text-red-200 bg-red-900/30 border border-red-800 p-3 rounded-lg max-w-md shadow-lg">{error}</p>
         </div>
       )}
 
