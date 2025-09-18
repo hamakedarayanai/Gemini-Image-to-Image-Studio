@@ -64,3 +64,43 @@ export const MaximizeIcon: React.FC = () => (
     <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
   </svg>
 );
+
+export const LogoIcon: React.FC = () => (
+  <svg
+    className="h-16 w-16 mx-auto mb-4"
+    viewBox="0 0 64 64"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <defs>
+      <linearGradient id="logo-gradient" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stopColor="#818cf8" /> {/* Equivalent to indigo-400 */}
+        <stop offset="100%" stopColor="#2dd4bf" /> {/* Equivalent to teal-400 */}
+      </linearGradient>
+    </defs>
+    {/* The "before" image frame */}
+    <rect
+      x="10"
+      y="22"
+      width="32"
+      height="32"
+      rx="4"
+      stroke="url(#logo-gradient)"
+      strokeWidth="4"
+      opacity="0.5"
+    />
+    {/* The "after" image frame, transformed */}
+    <rect
+      x="22"
+      y="10"
+      width="32"
+      height="32"
+      rx="4"
+      stroke="url(#logo-gradient)"
+      strokeWidth="4"
+    />
+    {/* Sparkle effect */}
+    <path d="M48 24L50 22M46 22L48 24M48 20V28" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M20 46L22 44M18 44L20 46M20 42V50" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.7"/>
+  </svg>
+);
