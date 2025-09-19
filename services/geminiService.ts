@@ -60,59 +60,53 @@ export const generateImageFromImage = async (
       },
     });
 
-    const candidate = response.candidates?.[0];
-
-    // Case 1: No candidates returned, check promptFeedback for blocking.
-    if (!candidate) {
+    // Handle cases where the request was blocked before even reaching the model.
+    if (!response.candidates?.length) {
       if (response.promptFeedback?.blockReason) {
         throw new Error(
           `Request was blocked due to ${response.promptFeedback.blockReason}. ` +
           (response.promptFeedback.blockReasonMessage || 'Please adjust your prompt or images.')
         );
       }
-      throw new Error("API returned no content. Your request may have been blocked for an unspecified reason.");
+      throw new Error("API returned no content. Your request may have been blocked for safety reasons.");
     }
-    
-    // The text part from the model might contain a more specific explanation for failure.
-    const failureTextPart = candidate.content?.parts?.find(p => 'text' in p && p.text);
-    const failureText = failureTextPart && 'text' in failureTextPart ? failureTextPart.text : undefined;
 
-
-    // Case 2: Candidate exists, but generation finished for a bad reason.
-    if (candidate.finishReason && ['SAFETY', 'RECITATION'].includes(candidate.finishReason)) {
-      throw new Error(failureText || `Generation failed due to ${candidate.finishReason.toLowerCase()} policy.`);
-    }
-    
-    let imageUrl: string | null = null;
-    let text: string | null = null;
-    let hasImageOutput = false;
-    
+    const candidate = response.candidates[0];
     const responseParts = candidate.content?.parts ?? [];
+    
+    // Extract all text and image data from the response parts.
+    let imageUrl: string | null = null;
+    const textParts: string[] = [];
 
     for (const part of responseParts) {
       if (part.text) {
-        text = part.text;
+        textParts.push(part.text);
       } else if (part.inlineData) {
         const base64ImageBytes: string = part.inlineData.data;
         const mimeType = part.inlineData.mimeType;
         imageUrl = `data:${mimeType};base64,${base64ImageBytes}`;
-        hasImageOutput = true;
       }
     }
 
-    // Case 3: Candidate exists, but no image was returned.
-    if (!hasImageOutput) {
-      // The text part might explain why.
-      throw new Error(text || "API did not return an image. This could be due to a safety policy violation or an issue with the prompt.");
+    const combinedText = textParts.join(' ').trim();
+
+    // Check for explicit failure reasons from the model.
+    if (candidate.finishReason && ['SAFETY', 'RECITATION'].includes(candidate.finishReason)) {
+      throw new Error(combinedText || `Generation failed due to ${candidate.finishReason.toLowerCase()} policy.`);
     }
 
-    return { imageUrl, text };
+    // If there's no image in a successful response, it's an application-level error.
+    // The model might have responded with text explaining why.
+    if (!imageUrl) {
+      throw new Error(combinedText || "The model did not return an image. This could be due to a safety policy violation or an issue with the prompt. Please try again with a different prompt or image.");
+    }
+
+    return { imageUrl, text: combinedText || null };
+
   } catch (e) {
-    // Re-throw the error to be handled by the UI component
-    // This allows custom errors from above to pass through, and also catches network/API key errors.
     const error = e as Error;
     console.error("Gemini API Error:", error);
-    // Let's make sure it's always an error object with a message
+    // Re-throw with a consistent error message format.
     throw new Error(error.message || "An unknown error occurred during image generation.");
   }
 };
