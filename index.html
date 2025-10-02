@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -6,6 +5,9 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gemini Image-to-Image Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
       /* For custom scrollbars */
@@ -13,14 +15,56 @@
         width: 8px;
       }
       ::-webkit-scrollbar-track {
-        background: #1f2937;
+        background: #111827; /* Darker track */
       }
       ::-webkit-scrollbar-thumb {
-        background: #4b5563;
+        background: #374151; /* Muted thumb */
         border-radius: 4px;
       }
       ::-webkit-scrollbar-thumb:hover {
-        background: #6b7280;
+        background: #4b5563;
+      }
+
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: #030712; /* A very dark blue-gray */
+        background-image: radial-gradient(circle at 25% 0%, rgba(59, 130, 246, 0.1) 0%, rgba(17, 24, 39, 0) 50%);
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .animate-fadeIn {
+        animation: fadeIn 0.5s ease-in-out;
+      }
+
+      @keyframes pulse-glow {
+        0%, 100% {
+          box-shadow: 0 0 20px rgba(99, 102, 241, 0.3), 0 0 40px rgba(99, 102, 241, 0.2);
+        }
+        50% {
+          box-shadow: 0 0 30px rgba(99, 102, 241, 0.5), 0 0 60px rgba(99, 102, 241, 0.3);
+        }
+      }
+      .animate-pulse-glow {
+        animation: pulse-glow 2.5s infinite ease-in-out;
+      }
+      
+      @keyframes spin-slow {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+      .animate-spin-slow {
+        animation: spin-slow 3s linear infinite;
+      }
+
+      @keyframes spin-reverse-slow {
+        from { transform: rotate(360deg); }
+        to { transform: rotate(0deg); }
+      }
+      .animate-spin-reverse-slow {
+        animation: spin-reverse-slow 4s linear infinite;
       }
     </style>
   <script type="importmap">
@@ -34,7 +78,7 @@
 }
 </script>
 </head>
-  <body class="bg-gray-900 text-gray-100">
+  <body class="text-gray-100">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>

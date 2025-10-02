@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface PromptInputProps {
@@ -15,7 +14,7 @@ export const PromptInput: React.FC<PromptInputProps> = ({ prompt, onPromptChange
         onChange={(e) => onPromptChange(e.target.value)}
         placeholder={placeholder}
         rows={4}
-        className="w-full p-3 bg-gray-900/70 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-colors duration-300 placeholder-gray-500"
+        className="w-full p-3 bg-gray-900/70 border border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-colors duration-300 placeholder-gray-500 resize-none"
       />
     </div>
   );

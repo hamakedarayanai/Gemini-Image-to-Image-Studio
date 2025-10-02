@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from 'react';
 import { Header } from './components/Header';
 import { ImageUploader } from './components/ImageUploader';
@@ -8,6 +7,13 @@ import { generateImageFromImage } from './services/geminiService';
 import { UploadedFile } from './types';
 import { WandIcon } from './components/Icons';
 import { ImagePreviewModal } from './components/ImagePreviewModal';
+
+const promptSuggestions = [
+  'Add a futuristic element',
+  'Make it a fantasy scene',
+  'Change season to winter',
+  'Apply a vintage photo effect',
+];
 
 function App() {
   const [baseImage, setBaseImage] = useState<UploadedFile | null>(null);
@@ -47,14 +53,19 @@ function App() {
     }
   }, [baseImage, referenceImage, prompt]);
 
+  const handleSuggestionClick = (suggestion: string) => {
+    setPrompt(prev => prev ? `${prev}, ${suggestion.toLowerCase()}` : suggestion);
+  };
+
+
   return (
-    <div className="min-h-screen bg-gray-900 text-gray-200 font-sans">
+    <div className="min-h-screen text-gray-200 font-sans">
       <main className="container mx-auto p-4 md:p-8">
         <Header />
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-10">
           {/* Controls Column */}
-          <div className="flex flex-col gap-6 p-6 bg-gray-800/50 rounded-2xl border border-gray-700 shadow-2xl">
+          <div className="flex flex-col gap-6 p-6 bg-gray-900/50 rounded-2xl border border-gray-700 shadow-2xl backdrop-blur-sm">
             <h2 className="text-2xl font-bold text-indigo-400">1. Upload Images</h2>
             <ImageUploader
               title="Base Image"
@@ -77,12 +88,24 @@ function App() {
               onPromptChange={setPrompt}
               placeholder="e.g., 'make the sky a vibrant sunset' or 'add a futuristic car'"
             />
+
+            <div className="flex flex-wrap gap-2">
+              {promptSuggestions.map((suggestion) => (
+                <button
+                  key={suggestion}
+                  onClick={() => handleSuggestionClick(suggestion)}
+                  className="px-3 py-1 text-xs font-medium text-indigo-300 bg-indigo-900/50 border border-indigo-800 rounded-full hover:bg-indigo-900 hover:text-indigo-200 transition-colors"
+                >
+                  {suggestion}
+                </button>
+              ))}
+            </div>
             
             <div className="mt-auto pt-6">
               <button
                 onClick={handleGenerate}
                 disabled={!baseImage || isLoading}
-                className="w-full flex items-center justify-center gap-3 bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-900/50 disabled:cursor-not-allowed text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg shadow-indigo-600/30"
+                className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-indigo-600 to-teal-500 hover:from-indigo-500 hover:to-teal-400 disabled:from-indigo-900/50 disabled:to-teal-900/50 disabled:text-gray-400 disabled:cursor-not-allowed text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg shadow-indigo-600/30"
               >
                 <WandIcon />
                 {isLoading ? 'Generating...' : 'Generate Image'}
@@ -91,10 +114,11 @@ function App() {
           </div>
 
           {/* Output Column */}
-          <div className="flex flex-col gap-6 p-6 bg-gray-800/50 rounded-2xl border border-gray-700 shadow-2xl">
+          <div className="flex flex-col gap-6 p-6 bg-gray-900/50 rounded-2xl border border-gray-700 shadow-2xl backdrop-blur-sm">
             <h2 className="text-2xl font-bold text-teal-400">Result</h2>
             <GeneratedImageDisplay
               imageUrl={generatedImageUrl}
+              baseImageUrl={baseImage?.previewUrl}
               text={generatedText}
               isLoading={isLoading}
               error={error}
